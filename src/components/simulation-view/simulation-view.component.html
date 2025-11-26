@@ -1,0 +1,161 @@
+
+<div class="flex h-full w-full bg-gray-900 text-gray-200">
+  <!-- Control Panel -->
+  <aside class="w-72 h-full bg-gray-800 p-4 overflow-y-auto flex-shrink-0">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-cyan-400">SPAD Simulator</h1>
+        <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+    </div>
+
+    <!-- Simulation Controls -->
+    <div class="mb-6 space-y-3">
+      <button (click)="runSimulation()" [disabled]="isSimulating() || isPreviewing()" class="w-full bg-cyan-600 hover:bg-cyan-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+        @if (isSimulating()) {
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Simulating... ({{ simulationProgress() }}%)
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
+          Run Simulation
+        }
+      </button>
+
+      <button (click)="previewTrajectory()" [disabled]="isSimulating() || isPreviewing()" class="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+        Preview Trajectory
+      </button>
+
+      <button (click)="downloadData()" [disabled]="!simulationResult()" class="w-full bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        Download Data
+      </button>
+    </div>
+
+    <!-- Parameter Accordions -->
+    <div class="space-y-2">
+      <!-- Ball Settings -->
+      <details class="bg-gray-700/50 rounded-lg" [open]="ballSettingsOpen()">
+        <summary (click)="$event.preventDefault(); ballSettingsOpen.set(!ballSettingsOpen())" class="p-3 font-semibold cursor-pointer select-none flex justify-between">
+          Tennis Ball Parameters
+          <span class="text-cyan-400 transition-transform" [class.rotate-180]="!ballSettingsOpen()">▼</span>
+        </summary>
+        <div class="p-4 border-t border-gray-600 space-y-4">
+          <div class="grid grid-cols-3 gap-2">
+            <div><label class="text-xs text-gray-400">Pos X</label><input type="number" [value]="initialPosX()" (input)="onNumberInput(initialPosX, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+            <div><label class="text-xs text-gray-400">Pos Y</label><input type="number" [value]="initialPosY()" (input)="onNumberInput(initialPosY, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+            <div><label class="text-xs text-gray-400">Pos Z</label><input type="number" [value]="initialPosZ()" (input)="onNumberInput(initialPosZ, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+            <div><label class="text-xs text-gray-400">Vel X</label><input type="number" [value]="initialVelX()" (input)="onNumberInput(initialVelX, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+            <div><label class="text-xs text-gray-400">Vel Y</label><input type="number" [value]="initialVelY()" (input)="onNumberInput(initialVelY, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+            <div><label class="text-xs text-gray-400">Vel Z</label><input type="number" [value]="initialVelZ()" (input)="onNumberInput(initialVelZ, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+          </div>
+           <div><label class="text-sm">Reflectivity (0-1)</label><input type="number" step="0.01" min="0" max="1" [value]="reflectivity()" (input)="onNumberInput(reflectivity, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+           <div><label class="text-sm">Restitution (Bounciness)</label><input type="number" step="0.1" min="0" max="1" [value]="restitution()" (input)="onNumberInput(restitution, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+        </div>
+      </details>
+
+      <!-- Detector Settings -->
+      <details class="bg-gray-700/50 rounded-lg" [open]="detectorSettingsOpen()">
+         <summary (click)="$event.preventDefault(); detectorSettingsOpen.set(!detectorSettingsOpen())" class="p-3 font-semibold cursor-pointer select-none flex justify-between">
+          Detector Parameters
+          <span class="text-cyan-400 transition-transform" [class.rotate-180]="!detectorSettingsOpen()">▼</span>
+        </summary>
+        <div class="p-4 border-t border-gray-600 space-y-4">
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-xs text-gray-400">Res. Width</label><input type="number" [value]="resolutionW()" (input)="onNumberInput(resolutionW, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+            <div><label class="text-xs text-gray-400">Res. Height</label><input type="number" [value]="resolutionH()" (input)="onNumberInput(resolutionH, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+          </div>
+          <div><label class="text-sm">Field of View (°)</label><input type="number" [value]="detectorFov()" (input)="onNumberInput(detectorFov, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+          <div><label class="text-sm">Frame Duration (μs)</label><input type="number" [value]="frameDurationUs()" (input)="onNumberInput(frameDurationUs, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+          <div><label class="text-sm">Quantum Efficiency</label><input type="number" step="0.1" [value]="quantumEfficiency()" (input)="onNumberInput(quantumEfficiency, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+          <div><label class="text-sm">Aperture Diameter (m)</label><input type="number" step="0.001" [value]="apertureDiameter()" (input)="onNumberInput(apertureDiameter, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+          <div><label class="text-sm">System Efficiency</label><input type="number" step="0.1" [value]="systemEfficiency()" (input)="onNumberInput(systemEfficiency, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+          <div><label class="text-sm">Filter Bandwidth (nm)</label><input type="number" [value]="filterBandwidth()" (input)="onNumberInput(filterBandwidth, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+          <div><label class="text-sm">Dark Count Rate (cps)</label><input type="number" [value]="darkCountRate()" (input)="onNumberInput(darkCountRate, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+        </div>
+      </details>
+
+      <!-- Environment & Laser -->
+      <details class="bg-gray-700/50 rounded-lg" [open]="envSettingsOpen()">
+         <summary (click)="$event.preventDefault(); envSettingsOpen.set(!envSettingsOpen())" class="p-3 font-semibold cursor-pointer select-none flex justify-between">
+          Environment & Laser
+          <span class="text-cyan-400 transition-transform" [class.rotate-180]="!envSettingsOpen()">▼</span>
+        </summary>
+        <div class="p-4 border-t border-gray-600 space-y-4">
+          <div>
+            <label class="text-sm">Solar Irradiance</label>
+            <input type="range" min="0" max="0.1" step="0.001" [value]="solarIrradiance()" (input)="onNumberInput(solarIrradiance, $event)" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <span class="text-xs text-gray-400">{{ solarIrradiance() }} W/m²/nm</span>
+          </div>
+          <div>
+            <label class="text-sm">Laser Peak Power (W)</label>
+             <input type="range" min="0" max="0.1" step="0.001" [value]="laserPeakPower()" (input)="onNumberInput(laserPeakPower, $event)" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <span class="text-xs text-gray-400">{{ laserPeakPower() }} W</span>
+          </div>
+        </div>
+      </details>
+
+      <!-- Simulation Settings -->
+       <details class="bg-gray-700/50 rounded-lg" [open]="simSettingsOpen()">
+         <summary (click)="$event.preventDefault(); simSettingsOpen.set(!simSettingsOpen())" class="p-3 font-semibold cursor-pointer select-none flex justify-between">
+          Simulation Settings
+          <span class="text-cyan-400 transition-transform" [class.rotate-180]="!simSettingsOpen()">▼</span>
+        </summary>
+        <div class="p-4 border-t border-gray-600 space-y-4">
+          <div><label class="text-sm">Number of Frames</label><input type="number" [value]="nFrames()" (input)="onNumberInput(nFrames, $event)" class="w-full bg-gray-900 rounded p-2 text-sm"></div>
+        </div>
+      </details>
+    </div>
+  </aside>
+
+  <!-- 3D Viewport -->
+  <main #canvasContainer class="flex-grow h-full relative">
+    <canvas #rendererCanvas class="w-full h-full block"></canvas>
+    <div class="absolute top-4 left-4 bg-gray-900/50 p-2 rounded-lg text-xs pointer-events-none">
+        <p>Detector at (0, 1, 0) | Ground at Y=0</p>
+    </div>
+    <div class="absolute bottom-4 left-4 bg-gray-900/50 p-2 rounded-lg text-xs pointer-events-none">
+        <p><strong>Controls:</strong> Drag to orbit, Scroll to zoom, Right-click to pan.</p>
+    </div>
+  </main>
+
+  <!-- Results Modal -->
+  @if (showResultsModal()) {
+    <div class="absolute inset-0 bg-black/60 flex items-center justify-center" (click)="showResultsModal.set(false)">
+      <div (click)="$event.stopPropagation()" class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl text-gray-200">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold text-cyan-400">Simulation Results</h2>
+          <button (click)="showResultsModal.set(false)" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        
+        <div class="bg-gray-900 p-4 rounded-lg mb-4 grid grid-cols-2 gap-4 text-center">
+            <div>
+                <p class="text-sm text-gray-400">Signal Photons</p>
+                <p class="text-2xl font-semibold text-green-400">{{ simulationResult()?.signalPhotons }}</p>
+            </div>
+             <div>
+                <p class="text-sm text-gray-400">Noise Photons</p>
+                <p class="text-2xl font-semibold text-yellow-400">{{ simulationResult()?.noiseEvents }}</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="text-center">
+                <h3 class="font-semibold mb-2">Photon Counting</h3>
+                <canvas #photonCountingCanvas class="w-64 h-64 mx-auto border border-gray-600 rounded" style="image-rendering: pixelated;"></canvas>
+            </div>
+             <div class="text-center">
+                <h3 class="font-semibold mb-2">Ground Truth Trajectory</h3>
+                <canvas #groundTruthCanvas class="w-64 h-64 mx-auto border border-gray-600 rounded" style="image-rendering: pixelated;"></canvas>
+            </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
