@@ -8,6 +8,10 @@
 
 > **关键词**: SPAD, LiDAR, 单光子成像, 动态目标追踪, 物理仿真, Three.js, Angular
 
+<img width="1854" height="1089" alt="Image" src="https://github.com/user-attachments/assets/1ba97fba-38cf-44fe-8b3f-a25ea9375792" />
+
+<img width="737" height="526" alt="Image" src="https://github.com/user-attachments/assets/a3dc4560-20d8-4cc9-92ec-e3d264fee931" />
+
 ## 📖 项目简介 (Introduction)
 
 **动态目标单光子 LiDAR/SPAD 仿真器** 是一个基于 Web 的高保真物理仿真工具，专门用于模拟 **单光子雪崩二极管 (SPAD)** 阵列对高速运动目标（如弹跳的网球）的探测与追踪过程。
