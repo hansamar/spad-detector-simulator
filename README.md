@@ -6,7 +6,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6.svg?logo=typescript&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-> **关键词**: SPAD, LiDAR, 单光子成像, 动态目标追踪, 泊松噪声, 物理仿真, Three.js, Angular
+> **关键词**: SPAD, LiDAR, 单光子成像, 动态目标追踪, 物理仿真, Three.js, Angular
 
 ## 📖 项目简介 (Introduction)
 
